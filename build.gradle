@@ -12,7 +12,6 @@ repositories {
             password = "${artifactory_password}"
         }
     }
-	
     jcenter()
 }
 

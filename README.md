@@ -1,6 +1,6 @@
 ## About ##
 
-This project is aimed to run load tests over the integration API. A job can run it [here](https://jcbci.chemaxon.com/view/CCheck/job/CCheck%20-%20Run%20-%20Load%20test/).
+This project is aimed to run load tests over the integration API.
 
 In the end it generates a load report in HTML.
 
@@ -12,7 +12,7 @@ It is possible to pass the following arguments to gradle:
 
 | Parameter | Default value | About |
 |-----------|---------------|-------|
-| ur        | http://cchecker-test.bpo.cxn:8082/cc-bigdata/integration/ | Which server to call. |
+| ur        | http://localhost:8082/cc-bigdata/integration/ | Which server to call. |
 | user      | admin         | The User how runs queries. |
 | password  | adminPass     | The password of the user. |
 | file      | `100_mols.csv` | Which file to check. Currently `100_mols.csv` is the only available. |
@@ -24,7 +24,7 @@ It is possible to pass the following arguments to gradle:
 #### Examples: ####
 
 ```
-./gradlew runLoadTest -Purl=http://localhost:8080/cc-bigdata/integration/ -Puser=test -Ppassword=testP
+./gradlew runLoadTest -Purl=http://localhost:8082/cc-bigdata/integration/ -Puser=test -Ppassword=testP
 ./gradlew runLoadTest -Pthreads=10
 ./gradlew runLoadTest -Pchunks=60 -PfailOnError=true
 ```
