@@ -1,0 +1,70 @@
+// Apply the java-library plugin to add support for Java Library
+apply plugin: 'java-library'
+apply plugin: 'application'
+
+repositories {
+    // Use jcenter for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    maven {
+        url 'https://hub.chemaxon.com/artifactory/libs-release'
+        credentials {
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+        }
+    }
+	
+    jcenter()
+}
+
+dependencies {
+    // This dependency is exported to consumers, that is to say found on their compile classpath.
+    api 'org.apache.commons:commons-math3:3.6.1'
+
+    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+    implementation 'com.google.guava:guava:21.0'
+    
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    compile group: 'com.chemaxon', name: 'core', version: '+'
+    compile group: 'com.chemaxon', name: 'io-all', version: '+'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.8.2' 
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
+    compile group: 'org.dom4j', name: 'dom4j', version: '2.0.1'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    
+    
+    
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+}
+
+mainClassName = "com.chemaxon.cc.load.LoadRunner"
+
+def runArgs = [
+                 "--threads", "${threads}", 
+                 "--chunks", "${chunks}", 
+                 "--url", "${url}", 
+                 "--http-user", "${user}", 
+                 "--http-password", "${password}", 
+                 "--file", "${file}", 
+                 "--save", "${output}"
+		      ];
+
+if ( failOnError.toBoolean() ) {
+    runArgs << "--failOnError"
+} 
+
+if ( saveInput.toBoolean() ) {
+    runArgs << "--saveInputInReport"
+}
+
+task runLoadTest(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  main = "com.chemaxon.cc.load.LoadRunner"
+  group "Load test"
+
+  args = runArgs
+}
