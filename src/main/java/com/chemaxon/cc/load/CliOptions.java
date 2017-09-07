@@ -40,7 +40,7 @@ public class CliOptions {
 
     public CliOptions(String[] args) throws ParseException {
         buildOptions();
-        new HelpFormatter().printHelp("cc-load-test", "This program runs load test on cc instance", opts,
+        new HelpFormatter().printHelp("cchecker-load-test", "This program runs load test on cc instance", opts,
                 "For further information please contact cc-cupport /at/ chemaxon.com", true);
         commandlineParser = new DefaultParser();
         commandline = commandlineParser.parse(opts, args);
