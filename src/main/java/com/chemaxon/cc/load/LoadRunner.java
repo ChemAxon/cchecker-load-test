@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 ChemAxon Ltd. https://ww.chemaxon.com/
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.chemaxon.cc.load;
 
 import java.io.IOException;
@@ -19,7 +35,8 @@ public class LoadRunner {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoadRunner.class);
 
-    public static void main(String[] args) throws ParseException, IOException, URISyntaxException, InterruptedException {
+    public static void main(String[] args)
+            throws ParseException, IOException, URISyntaxException, InterruptedException {
         CliOptions clio = new CliOptions(args);
         final List<Molecule> mols = LoadMolecules(clio);
         LOG.info("running on {} concurrent threads", clio.getThreads());
@@ -33,39 +50,43 @@ public class LoadRunner {
         List<ComplianceCaller> ccallers = new ArrayList<>();
         Instant start = Instant.now();
         for (int i = 0; i < clio.getThreads(); ++i) {
-            ComplianceCaller ccaller = new ComplianceCaller(mols, clio.getURL(), clio.getChunks(), clio.getUser(), clio.getPassword());
+            ComplianceCaller ccaller = new ComplianceCaller(mols, clio.getURL(), clio.getChunks(), clio.getUser(),
+                    clio.getPassword());
             ccallers.add(ccaller);
-            Thread t = new Thread(ccaller, "ComplianceRunner_"+i);
+            Thread t = new Thread(ccaller, "ComplianceRunner_" + i);
             t.start();
             threads.add(t);
         }
-        for(Thread t : threads) {
+        for (Thread t : threads) {
             t.join();
         }
         Instant end = Instant.now();
         boolean noErrors = true;
         int sumChecks = 0;
         int faliedThreads = 0;
-        for(ComplianceCaller ccaller : ccallers) {
+        for (ComplianceCaller ccaller : ccallers) {
             noErrors &= ccaller.isEveryCheckFinnished();
-            sumChecks+=ccaller.getErrorCount()+ccaller.getHitCount()+ccaller.getPassedCount();
-            if(!ccaller.isEveryCheckFinnished()) {
+            sumChecks += ccaller.getErrorCount() + ccaller.getHitCount() + ccaller.getPassedCount();
+            if (!ccaller.isEveryCheckFinnished()) {
                 ++faliedThreads;
             }
-            LOG.info("hit: {}\terrror: {}\tpassed: {}\t -- {}", ccaller.getHitCount(), ccaller.getErrorCount(), ccaller.getPassedCount(), ccaller.isEveryCheckFinnished()?"PASSED":"FAILED");
+            LOG.info("hit: {}\terrror: {}\tpassed: {}\t -- {}", ccaller.getHitCount(), ccaller.getErrorCount(),
+                    ccaller.getPassedCount(), ccaller.isEveryCheckFinnished() ? "PASSED" : "FAILED");
         }
-        if(noErrors) {
+        if (noErrors) {
             LOG.info("Every check could finnish");
         } else {
             LOG.error("Error has happenned during checking");
             LOG.error("Failed threads count: {}", faliedThreads);
         }
-        LOG.info("checked mols: {}\tplannedChecks: {}\t {}%", sumChecks, clio.getThreads()*mols.size(), ((double)sumChecks)/(clio.getThreads()*mols.size())*100.0);
+        LOG.info("checked mols: {}\tplannedChecks: {}\t {}%", sumChecks, clio.getThreads() * mols.size(),
+                ((double) sumChecks) / (clio.getThreads() * mols.size()) * 100.0);
         LOG.info("taken: {}", Duration.between(start, end));
-        LOG.info("throughput: {} mol/sec", (((double)sumChecks)/Duration.between(start, end).toMillis())*1000);
+        LOG.info("throughput: {} mol/sec", (((double) sumChecks) / Duration.between(start, end).toMillis()) * 1000);
         new ReportCreator(ccallers.stream().map(cc -> cc.getLogs()).collect(Collectors.toList()),
-                clio.getThreads() * mols.size(), sumChecks, start, end, clio.isSaveInput()).saveHtmlReport(clio.getOutput());
-        if(clio.isFailOnError() && !noErrors) {
+                clio.getThreads() * mols.size(), sumChecks, start, end, clio.isSaveInput())
+                        .saveHtmlReport(clio.getOutput());
+        if (clio.isFailOnError() && !noErrors) {
             System.exit(1);
         }
     }

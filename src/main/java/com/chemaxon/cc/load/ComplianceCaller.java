@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 ChemAxon Ltd. https://ww.chemaxon.com/
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.chemaxon.cc.load;
 
 import java.io.IOException;
@@ -43,18 +59,18 @@ public class ComplianceCaller implements Runnable {
     private final int chunkSize;
     private final String user;
     private final String password;
-    private final List<RunTimeLog> runs=new ArrayList<>();
+    private final List<RunTimeLog> runs = new ArrayList<>();
     private int passedCount = 0;
     private int hitCount = 0;
     private int errorCount = 0;
-    
 
-    public ComplianceCaller(List<Molecule> molsToCheck, URL url, int chunkSize, String user, String password) throws URISyntaxException {
+    public ComplianceCaller(List<Molecule> molsToCheck, URL url, int chunkSize, String user, String password)
+            throws URISyntaxException {
         this.molsToCheck = Collections.unmodifiableList(ComplianceCaller.shuffle(molsToCheck));
         this.uriToCall = new URI(url.toString() + "/check/list");
         this.chunkSize = chunkSize;
-        this.user=user;
-        this.password=password;
+        this.user = user;
+        this.password = password;
     }
 
     private static List<Molecule> shuffle(List<Molecule> molsToCheck) {
@@ -67,8 +83,7 @@ public class ComplianceCaller implements Runnable {
     public void run() {
         try {
             HttpClient client = HttpClients.custom()
-                    .setDefaultRequestConfig(RequestConfig.custom()
-                        .setCookieSpec(CookieSpecs.STANDARD).build())
+                    .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                     .build();
             try {
                 int count = 0;
@@ -92,23 +107,23 @@ public class ComplianceCaller implements Runnable {
             throw new RuntimeException("Exception during compliance checking", e);
         }
     }
-    
+
     public int getPassedCount() {
         return passedCount;
     }
-    
+
     public int getErrorCount() {
         return errorCount;
     }
-    
+
     public int getHitCount() {
         return hitCount;
     }
-    
+
     public List<RunTimeLog> getLogs() {
         return new ArrayList<>(runs);
     }
-    
+
     public boolean isEveryCheckFinnished() {
         return molsToCheck.size() == hitCount + errorCount + passedCount;
     }
@@ -122,10 +137,9 @@ public class ComplianceCaller implements Runnable {
     }
 
     private String createReuest(int count) throws IOException {
-        List<Molecule> subMols = molsToCheck.subList(count,
-                Math.min(count + chunkSize, molsToCheck.size()));
+        List<Molecule> subMols = molsToCheck.subList(count, Math.min(count + chunkSize, molsToCheck.size()));
         List<String> srcs = getSources(subMols);
-        
+
         CCheckingRequest req = new CCheckingRequest();
         req.setInput(srcs);
         Gson gson = new Gson();

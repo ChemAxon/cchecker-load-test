@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 ChemAxon Ltd. https://ww.chemaxon.com/
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package com.chemaxon.cc.load;
 
 import java.io.File;
@@ -46,7 +62,7 @@ public class ReportCreator {
         this.finishedMolCount = finishedMolCount;
         this.start = start;
         this.end = end;
-        this.saveInput=saveInput;
+        this.saveInput = saveInput;
     }
 
     public void saveHtmlReport(File file) throws IOException {
@@ -128,13 +144,18 @@ public class ReportCreator {
                 Element subDiv = body.addElement("div").addAttribute("style", "margin:20px; padding:20px;");
                 subDiv.addElement("p").addText(" ");
                 subDiv.addElement("h1").addText(ls.get(0).getThreadName());
-                createTable(ls.get(0).getThreadName(), ls, subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"));
+                createTable(ls.get(0).getThreadName(), ls,
+                        subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"));
                 subDiv.addElement("p").addText(" ");
-                createCanvas(ls.get(0).getThreadName()+"_cv", ls, subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"), "Runtimes");
-                addCanvasScript(ls.get(0).getThreadName()+"_cv", ls, subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"));
+                createCanvas(ls.get(0).getThreadName() + "_cv", ls,
+                        subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"), "Runtimes");
+                addCanvasScript(ls.get(0).getThreadName() + "_cv", ls,
+                        subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"));
                 subDiv.addElement("p").addText(" ");
-                createCanvas(ls.get(0).getThreadName()+"_cv2", all, subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"), "Distribution");
-                addGausCanvasScript(ls.get(0).getThreadName()+"_cv2", ls, subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"));
+                createCanvas(ls.get(0).getThreadName() + "_cv2", all,
+                        subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"), "Distribution");
+                addGausCanvasScript(ls.get(0).getThreadName() + "_cv2", ls,
+                        subDiv.addElement("div").addAttribute("stlye", "padding:20px;margin:20px;"));
                 subDiv.addElement("p").addText(" ");
             }
         });
@@ -143,8 +164,11 @@ public class ReportCreator {
     private void addGausCanvasScript(String id, List<RunTimeLog> logs, Element body) {
         int idx = ai.getAndIncrement();
         Map<Double, Long> sim = countSimilarTimes(logs);
-        body.addElement("script").addText("var ctx"+idx+"= document.getElementById('"+id+"').getContext('2d');\n"
-                + "var chart"+idx+" = new Chart(ctx"+idx+", { type:'line', data: { labels: "+getCountLabels(sim.keySet())+", datasets: [{ data:"+getMilliSecLongJSON(new ArrayList<Long>(sim.values()))+ "}]},\n"
+        body.addElement("script")
+                .addText("var ctx" + idx + "= document.getElementById('" + id + "').getContext('2d');\n" + "var chart"
+                        + idx + " = new Chart(ctx" + idx + ", { type:'line', data: { labels: "
+                        + getCountLabels(sim.keySet()) + ", datasets: [{ data:"
+                        + getMilliSecLongJSON(new ArrayList<Long>(sim.values())) + "}]},\n"
                         + "options:{scales: {xAxes:[{display:true, scaleLabel: {display:true, labelString:'Time'}}],\n"
                         + "yAxes:[{display:true, scaleLabel: {display:true, labelString:'Count'}}]}}});");
     }
@@ -156,7 +180,7 @@ public class ReportCreator {
     private String getCountLabels(Set<Double> keySet) {
         Gson gson = new Gson();
         List<Double> vals = new ArrayList<>(keySet.size());
-        for(double v : keySet) {
+        for (double v : keySet) {
             vals.add(v);
         }
         return gson.toJson(vals);
@@ -164,8 +188,10 @@ public class ReportCreator {
 
     private void addCanvasScript(String id, List<RunTimeLog> logs, Element body) {
         int idx = ai.getAndIncrement();
-        body.addElement("script").addText("var ctx"+idx+"= document.getElementById('"+id+"').getContext('2d');\n"
-                + "var chart"+idx+" = new Chart(ctx"+idx+", { type:'line', data: { labels: "+getCountLabels(logs)+", datasets: [{ data:"+getMilliSecJSON(logs)+ "}]},\n"
+        body.addElement("script")
+                .addText("var ctx" + idx + "= document.getElementById('" + id + "').getContext('2d');\n" + "var chart"
+                        + idx + " = new Chart(ctx" + idx + ", { type:'line', data: { labels: " + getCountLabels(logs)
+                        + ", datasets: [{ data:" + getMilliSecJSON(logs) + "}]},\n"
                         + "options:{scales: {xAxes:[{display:true, scaleLabel: {display:true, labelString:'nth request'}}],\n"
                         + "yAxes:[{display:true, scaleLabel: {display:true, labelString:'Time'}}]}}});");
     }
@@ -173,7 +199,7 @@ public class ReportCreator {
     private String getCountLabels(List<RunTimeLog> logs) {
         Gson gson = new Gson();
         List<Integer> counts = new ArrayList<>(logs.size());
-        for(int i=0; i<logs.size(); ++i) {
+        for (int i = 0; i < logs.size(); ++i) {
             counts.add(i);
         }
         return gson.toJson(counts);
@@ -185,9 +211,11 @@ public class ReportCreator {
     }
 
     private void createCanvas(String id, List<RunTimeLog> logs, Element root, String title) {
-        Element div = root.addElement("div").addAttribute("style", "width:512px; height:378px;margin:20px;padding:20px;");
+        Element div = root.addElement("div").addAttribute("style",
+                "width:512px; height:378px;margin:20px;padding:20px;");
         div.addElement("h2").addText(title);
-        div.addElement("canvas").addAttribute("id", id).addAttribute("width", "512").addAttribute("height", "384").addText(" ");
+        div.addElement("canvas").addAttribute("id", id).addAttribute("width", "512").addAttribute("height", "384")
+                .addText(" ");
     }
 
     private void createTable(String id, List<RunTimeLog> logs, Element root) {
@@ -204,7 +232,7 @@ public class ReportCreator {
         headRow.addElement("td").addText("Response - Error");
         headRow.addElement("td").addText("Response - Hit");
         headRow.addElement("td").addText("Response - Hit size");
-        if(saveInput) {
+        if (saveInput) {
             headRow.addElement("td").addText("Request");
         }
         Element tbody = table.addElement("tbody");
@@ -219,7 +247,7 @@ public class ReportCreator {
             tr.addElement("td").addText(Integer.toString(rtl.getResponse().getError()));
             tr.addElement("td").addText(Integer.toString(rtl.getResponse().getHitCount()));
             tr.addElement("td").addText(Integer.toString(rtl.getResponse().getHitSize()));
-            if(saveInput) {
+            if (saveInput) {
                 tr.addElement("td").addText(rtl.getRequest());
             }
         }
@@ -259,14 +287,15 @@ public class ReportCreator {
         summary.put("populatin variance", stats.getPopulationVariance());
         return summary;
     }
-    
+
     private Map<Double, Long> countSimilarTimes(List<RunTimeLog> logs) {
         Map<Double, Long> summary = new LinkedHashMap<>();
-        long minL = logs.stream().map(l -> l.getDuration().toMillis()).min((lhs, rhs) -> (int)(lhs-rhs)).get();
-        long maxL = logs.stream().map(l -> l.getDuration().toMillis()).max((lhs, rhs) -> (int)(lhs-rhs)).get();
-        for(double i = (minL/1000.0); i<(maxL/1000.0); i+=0.1) {
-            final double ip = Precision.round(i,1);
-            summary.put(ip, logs.stream().map(l -> Precision.round((l.getDuration().toMillis()/1000.0), 1)).filter(d -> Double.compare(d, ip)==0).count());
+        long minL = logs.stream().map(l -> l.getDuration().toMillis()).min((lhs, rhs) -> (int) (lhs - rhs)).get();
+        long maxL = logs.stream().map(l -> l.getDuration().toMillis()).max((lhs, rhs) -> (int) (lhs - rhs)).get();
+        for (double i = (minL / 1000.0); i < (maxL / 1000.0); i += 0.1) {
+            final double ip = Precision.round(i, 1);
+            summary.put(ip, logs.stream().map(l -> Precision.round((l.getDuration().toMillis() / 1000.0), 1))
+                    .filter(d -> Double.compare(d, ip) == 0).count());
         }
         return summary;
     }
