@@ -27,9 +27,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
@@ -39,7 +41,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +137,7 @@ public class ComplianceCaller implements Runnable {
         HttpPost post = new HttpPost(uriToCall);
         post.setEntity(req);
         post.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
-        HttpResponse r = client.execute(post, getContext());
+        HttpResponse r = client.execute(targetHost, post, getContext());
         return r;
     }
 
@@ -176,16 +181,18 @@ public class ComplianceCaller implements Runnable {
 
     private HttpClientContext getContext() {
         CredentialsProvider credsProvider = getCredentialsProvider();
+        AuthCache authCache = new BasicAuthCache();
+        authCache.put(targetHost, new BasicScheme());
 
         HttpClientContext hcc = new HttpClientContext();
         hcc.setCredentialsProvider(credsProvider);
+        hcc.setAuthCache(authCache);
         return hcc;
     }
 
     private CredentialsProvider getCredentialsProvider() {
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(
-                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM, AuthScope.ANY_SCHEME),
+        credsProvider.setCredentials(AuthScope.ANY,
                 new UsernamePasswordCredentials(user, password));
         return credsProvider;
     }
