@@ -12,7 +12,7 @@ It is possible to pass the following arguments to gradle:
 
 | Parameter | Default value | About |
 |-----------|---------------|-------|
-| ur        | http://localhost:8082/cc-bigdata/integration/ | Which server to call. |
+| url       | http://localhost:8082/cc-bigdata/integration/ | Which server to call. |
 | user      | admin         | The User how runs queries. |
 | password  | adminPass     | The password of the user. |
 | file      | `100_mols.csv` | Which file to check. Currently `100_mols.csv` is the only available. |
