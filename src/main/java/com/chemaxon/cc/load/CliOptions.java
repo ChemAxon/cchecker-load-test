@@ -40,8 +40,7 @@ public class CliOptions {
 
     public CliOptions(String[] args) throws ParseException {
         buildOptions();
-        new HelpFormatter().printHelp("cchecker-load-test", "This program runs load test on cc instance", opts,
-                "For further information please contact cc-cupport /at/ chemaxon.com", true);
+        new HelpFormatter().printHelp( "cchecker-load-test", "This program runs load test on cc instance", opts, "For further information please contact cc-support /at/ chemaxon.com", true);
         commandlineParser = new DefaultParser();
         commandline = commandlineParser.parse(opts, args);
         for (Option o : commandline.getOptions()) {
@@ -68,9 +67,9 @@ public class CliOptions {
                 .desc("If set and any error happens, the application will fail with an error.").hasArg(false)
                 .required(false).build();
         Option saveInput = Option.builder("i").longOpt("saveInputInReport")
-                .desc("If set report will contain input data.").hasArg(false).required(false).build();
-        opts = new Options();
-        opts.addOption(threads);
+        Option dateToCheck = Option.builder("d").longOpt("dateToCheck").desc("The date to check against").hasArg()
+                .required(false).build();
+        opts = new Options();        opts.addOption(threads);
         opts.addOption(chunks);
         opts.addOption(url);
         opts.addOption(file);
@@ -79,6 +78,7 @@ public class CliOptions {
         opts.addOption(output);
         opts.addOption(failOnError);
         opts.addOption(saveInput);
+        opts.addOption(dateToCheck);
     }
 
     public int getThreads() {
@@ -133,5 +133,12 @@ public class CliOptions {
             return true;
         }
         return false;
+    }
+
+    public String getDate() {
+        if (commandline.hasOption("dateToCheck")) {
+            return commandline.getOptionValue("dateToCheck");
+        }
+        return null;
     }
 }

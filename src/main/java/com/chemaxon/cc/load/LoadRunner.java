@@ -38,7 +38,7 @@ public class LoadRunner {
     public static void main(String[] args)
             throws ParseException, IOException, URISyntaxException, InterruptedException {
         CliOptions clio = new CliOptions(args);
-        final List<Molecule> mols = LoadMolecules(clio);
+        final List<Molecule> mols = loadMolecules(clio);
         LOG.info("running on {} concurrent threads", clio.getThreads());
         LOG.info("sending {} mols in one request", clio.getChunks());
         LOG.info("using service: {}", clio.getURL());
@@ -50,8 +50,7 @@ public class LoadRunner {
         List<ComplianceCaller> ccallers = new ArrayList<>();
         Instant start = Instant.now();
         for (int i = 0; i < clio.getThreads(); ++i) {
-            ComplianceCaller ccaller = new ComplianceCaller(mols, clio.getURL(), clio.getChunks(), clio.getUser(),
-                    clio.getPassword());
+            ComplianceCaller ccaller = new ComplianceCaller(mols, clio.getURL(), clio.getChunks(), clio.getUser(), clio.getPassword(), clio.getDate());
             ccallers.add(ccaller);
             Thread t = new Thread(ccaller, "ComplianceRunner_" + i);
             t.start();
@@ -91,7 +90,7 @@ public class LoadRunner {
         }
     }
 
-    private static List<Molecule> LoadMolecules(CliOptions clio) throws IOException {
+    private static List<Molecule> loadMolecules(CliOptions clio) throws IOException {
         List<Molecule> mols = new ArrayList<>();
         try (MolImporter mi = new MolImporter(clio.getFile())) {
             Molecule m = null;

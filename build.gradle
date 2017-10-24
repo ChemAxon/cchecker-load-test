@@ -60,6 +60,10 @@ if ( saveInput.toBoolean() ) {
     runArgs << "--saveInputInReport"
 }
 
+if( dateToCheck ) {
+    runArgs << "--dateToCheck" << "$dateToCheck"
+}
+
 task runLoadTest(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   main = "com.chemaxon.cc.load.LoadRunner"
