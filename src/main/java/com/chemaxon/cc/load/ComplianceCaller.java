@@ -66,18 +66,20 @@ public class ComplianceCaller implements Runnable {
     private final String password;
     private final List<RunTimeLog> runs = new ArrayList<>();
     private final String dateToCheck;
+    private final List<String> categoriesToCheck;
     private int passedCount = 0;
     private int hitCount = 0;
     private int errorCount = 0;
     
 
-    public ComplianceCaller(List<Molecule> molsToCheck, URL url, int chunkSize, String user, String password, String dateToCheck) throws URISyntaxException {
+    public ComplianceCaller(List<Molecule> molsToCheck, URL url, int chunkSize, String user, String password, String dateToCheck, List<String> categoriesToCheck) throws URISyntaxException {
         this.molsToCheck = Collections.unmodifiableList(ComplianceCaller.shuffle(molsToCheck));
         this.uriToCall = new URI(url.toString() + "/check/list");
         this.chunkSize = chunkSize;
         this.user = user;
         this.password = password;
         this.dateToCheck=dateToCheck;
+        this.categoriesToCheck=categoriesToCheck;
     }
 
     private static List<Molecule> shuffle(List<Molecule> molsToCheck) {
@@ -150,6 +152,7 @@ public class ComplianceCaller implements Runnable {
         CCheckingRequest req = new CCheckingRequest();
         req.setInput(srcs);
         req.setDate(dateToCheck);
+        req.setCategories(categoriesToCheck);
         Gson gson = new Gson();
         return gson.toJson(req);
     }

@@ -50,7 +50,7 @@ public class LoadRunner {
         List<ComplianceCaller> ccallers = new ArrayList<>();
         Instant start = Instant.now();
         for (int i = 0; i < clio.getThreads(); ++i) {
-            ComplianceCaller ccaller = new ComplianceCaller(mols, clio.getURL(), clio.getChunks(), clio.getUser(), clio.getPassword(), clio.getDate());
+            ComplianceCaller ccaller = new ComplianceCaller(mols, clio.getURL(), clio.getChunks(), clio.getUser(), clio.getPassword(), clio.getDate(), clio.getCategories());
             ccallers.add(ccaller);
             Thread t = new Thread(ccaller, "ComplianceRunner_" + i);
             t.start();

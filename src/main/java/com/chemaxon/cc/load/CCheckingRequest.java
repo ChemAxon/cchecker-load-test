@@ -21,8 +21,9 @@ import java.util.List;
 public class CCheckingRequest {
 
     private List<String> input;
-    private String date;    public List<String> getInput() {
-        return input;
+    private String date;
+    private List<String> categories;
+    public List<String> getInput() {        return input;
     }
 
     public void setInput(List<String> input) {
@@ -35,5 +36,13 @@ public class CCheckingRequest {
     
     public void setDate(String date) {
         this.date = date;
+    }
+    
+    public List<String> getCategories() {
+        return categories;
+    }
+    
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 }

@@ -19,6 +19,8 @@ package com.chemaxon.cc.load;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -69,8 +71,10 @@ public class CliOptions {
         Option saveInput = Option.builder("i").longOpt("saveInputInReport")
         Option dateToCheck = Option.builder("d").longOpt("dateToCheck").desc("The date to check against").hasArg()
                 .required(false).build();
-        opts = new Options();        opts.addOption(threads);
-        opts.addOption(chunks);
+        Option catgoriesToCheck = Option.builder("l").longOpt("categoriesToCheck").desc("The categories to check against").hasArg()
+                .required(false).build();
+        opts = new Options();
+        opts.addOption(threads)        opts.addOption(chunks);
         opts.addOption(url);
         opts.addOption(file);
         opts.addOption(httpUser);
@@ -79,6 +83,7 @@ public class CliOptions {
         opts.addOption(failOnError);
         opts.addOption(saveInput);
         opts.addOption(dateToCheck);
+        opts.addOption(catgoriesToCheck);
     }
 
     public int getThreads() {
@@ -138,6 +143,13 @@ public class CliOptions {
     public String getDate() {
         if (commandline.hasOption("dateToCheck")) {
             return commandline.getOptionValue("dateToCheck");
+        }
+        return null;
+    }
+    
+    public List<String> getCategories() {
+        if (commandline.hasOption("categoriesToCheck")) {
+            return Arrays.asList(commandline.getOptionValue("categoriesToCheck").split(","));
         }
         return null;
     }
